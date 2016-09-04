@@ -7,6 +7,11 @@
 //
 
 #import "AppDelegate.h"
+#import "GroupsViewController.h"
+#import "Names.h"
+
+#import "Students.h"
+#import "Groups.h"
 
 @interface AppDelegate ()
 
@@ -14,9 +19,71 @@
 
 @implementation AppDelegate
 
+//Заполнение базы данных
+-(void)fillingCoreData{
+   
+        int namesArraySize = sizeof(names)/sizeof(names[0]);
+        
+        for (int j = 1; j <= 3; j++) {
+            
+            Groups* group = [NSEntityDescription insertNewObjectForEntityForName:@"Groups"
+                                                          inManagedObjectContext:self.managedObjectContext];
+            group.groupsNames = [[NSString stringWithFormat:@"%d",j] stringByAppendingString:@"-й курс"];
+            
+            NSMutableArray* validNamesNumbers = [[NSMutableArray alloc]init];
+            
+            for (int i = 0; i < namesArraySize; i++) {
+                [validNamesNumbers addObject:[NSNumber numberWithInt:i]];
+            }
+            
+            
+            int numOfStudsInGroup = arc4random_uniform(6)+10;  //в каждой группе по 10-15 человек
+            NSLog(@"%d",numOfStudsInGroup);
+            for (int i = 0; i < numOfStudsInGroup; i++) {
+                int temp = arc4random_uniform((int)[validNamesNumbers count]);
+                int nameNumber = [[validNamesNumbers objectAtIndex:temp] intValue];
+                
+                [validNamesNumbers removeObjectAtIndex:temp];
+                
+                Students* student = [NSEntityDescription insertNewObjectForEntityForName:@"Students"
+                                                                  inManagedObjectContext:self.managedObjectContext];
+                student.studentsNames = names[nameNumber];
+                
+                [group addStudentsInGroupObject:student] ;
+                
+            }
+            
+            [self.managedObjectContext save:nil];
+            
+            
+        }
+        NSError* error = nil;
+        if(![self.managedObjectContext save:&error]){
+            NSLog(@"%@",[error localizedDescription]);
+            
+            
+        }
+}
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    
+    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"HasLaunchedOnce"])
+    {
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"HasLaunchedOnce"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        [self fillingCoreData];
+    }
+    
+    
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
+    self.window.backgroundColor = [UIColor whiteColor];
+    [self.window makeKeyAndVisible];
+    
+    GroupsViewController* controller = [[GroupsViewController alloc]init];
+    UINavigationController* navController = [[UINavigationController alloc] initWithRootViewController:controller];
+    self.window.rootViewController = navController;    
+    
     return YES;
 }
 
@@ -84,12 +151,10 @@
         dict[NSLocalizedFailureReasonErrorKey] = failureReason;
         dict[NSUnderlyingErrorKey] = error;
         error = [NSError errorWithDomain:@"YOUR_ERROR_DOMAIN" code:9999 userInfo:dict];
-        // Replace this with code to handle the error appropriately.
-        // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+        
         NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
         abort();
     }
-    
     return _persistentStoreCoordinator;
 }
 
