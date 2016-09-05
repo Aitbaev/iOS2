@@ -7,6 +7,7 @@
 //
 #import "AppDelegate.h"
 #import "Groups.h"
+#import "RowsClass.h"
 #import "Students.h"
 #import "NamesViewController.h"
 #import "StudentViewController.h"
@@ -54,9 +55,9 @@
     NSEntityDescription*description =
     [NSEntityDescription entityForName:@"Students"
                 inManagedObjectContext:appDelegate.managedObjectContext];
-    NSLog(@"%@", self.group.groupsNames);
-    NSPredicate* predicate = [NSPredicate predicateWithFormat:@"SUBQUERY(studentsGroups, $sg, $sg.groupsNames == %@).@count >=%d",self.group.groupsNames, 1];
-    //NSPredicate* predicate = [NSPredicate predicateWithFormat:@"SUBQUERY(studentsGroups, $sg, $sg.objectID == %@).@count >=%d",self.group.objectID, 1];
+    NSLog(@"%@", self.group.objectID);
+
+    NSPredicate* predicate = [NSPredicate predicateWithFormat:@"SUBQUERY(studentsGroups, $sg, $sg == %@).@count >=%d",self.group.objectID, 1];
     
     
     [request setPredicate:predicate];
@@ -75,7 +76,10 @@
     //NSArray* arrayOfStudents = [self.group.studentsInGroup allObjects];
     
     for (Students* obj in resultArray) {
-        [self.rowsToDisplay addObject:obj.studentsNames];
+        RowsClass* rowObj = [[RowsClass alloc]init];
+        rowObj.itsRow = obj.studentsNames;
+        rowObj.itsID = obj.objectID;
+        [self.rowsToDisplay addObject:rowObj];
     }
 }
 
@@ -99,7 +103,7 @@
         cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
     
-    cell.textLabel.text = [self.rowsToDisplay objectAtIndex:indexPath.row];
+    cell.textLabel.text = [[self.rowsToDisplay objectAtIndex:indexPath.row] itsRow];
     
     return cell;
 }
@@ -109,18 +113,29 @@
     
     StudentViewController* namesVC = [[StudentViewController alloc]init];
     
-    namesVC.student = [self getStudentForRow:indexPath.row];
+    
+    NSFetchRequest* request = [[NSFetchRequest alloc]init];
+    
+    NSEntityDescription*description =
+    [NSEntityDescription entityForName:@"Students"
+                inManagedObjectContext:appDelegate.managedObjectContext];
+   
+    
+    NSPredicate* predicate = [NSPredicate predicateWithFormat:@"SELF == %@",[[self.rowsToDisplay objectAtIndex:indexPath.row] itsID]];
+    
+    [request setPredicate:predicate];
+    [request setEntity:description];
+    
+    NSError* requestError = nil;
+    NSArray* resultArray = [appDelegate.managedObjectContext executeFetchRequest:request error:&requestError];
+    if (requestError) {
+        NSLog(@"%@", [requestError localizedDescription]);
+    };
+    
+    namesVC.student = [resultArray objectAtIndex:0];
     
     [self.navigationController pushViewController:namesVC animated:YES];
    
-}
-
--(Students*)getStudentForRow:(NSInteger)row{
-    
-    
-    NSArray* arrayOfStudents = [self.group.studentsInGroup allObjects];
-    
-    return [arrayOfStudents objectAtIndex:row];
 }
 
 - (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar{

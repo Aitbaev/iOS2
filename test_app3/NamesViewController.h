@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @class Groups;
+@class RowsClass;
 @interface NamesViewController : UIViewController
 
 @property(weak, nonatomic)UITableView* tableView;

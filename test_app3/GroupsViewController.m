@@ -84,7 +84,7 @@ AppDelegate* appDelegate;
 
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    return groupsNumber;
+    return groupsNumber;//всегда равно 3
 }
 
 -(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
