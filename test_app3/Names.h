@@ -12,7 +12,7 @@
 
 #endif /* Names_h */
 
-
+static int groupsNumber = 3;
 
 static NSString* names[] = {
     @"Эрика Левченко",@"Дима Ким",@"Ирина Танюхина",

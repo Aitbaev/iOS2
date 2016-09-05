@@ -10,8 +10,9 @@
 #import "NamesViewController.h"
 #import "Groups.h"
 #import "Students.h"
+#import "Names.h"
+#import "RowsClass.h"
 
-static int groupsNumber = 3;
 
 @interface GroupsViewController ()<UITableViewDelegate,UITableViewDataSource, UISearchBarDelegate>
 
@@ -73,7 +74,10 @@ AppDelegate* appDelegate;
     };
     
     for(Groups* obj in resultArray){
-        [self.rowsToDisplay addObject:obj.groupsNames];
+        RowsClass* rowObj = [[RowsClass alloc]init];
+        rowObj.itsRow = obj.groupsNames;
+        rowObj.itsID = obj.objectID;
+        [self.rowsToDisplay addObject:rowObj];
     }
 }
 
@@ -84,7 +88,7 @@ AppDelegate* appDelegate;
 
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    return groupsNumber;//всегда равно 3
+    return groupsNumber;
 }
 
 -(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -97,7 +101,7 @@ AppDelegate* appDelegate;
         cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
     
-    cell.textLabel.text = [self.rowsToDisplay objectAtIndex:indexPath.row];
+    cell.textLabel.text = [[self.rowsToDisplay objectAtIndex:indexPath.row] itsRow];
     
     return cell;
 }
@@ -105,21 +109,17 @@ AppDelegate* appDelegate;
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-    NamesViewController* namesVC = [[NamesViewController alloc]init];
     
-    namesVC.group = [self getGroupForRow:indexPath.row];
-    
-    [self.navigationController pushViewController:namesVC animated:YES];
-    
-}
-
--(Groups*)getGroupForRow:(NSInteger)row{
     NSFetchRequest* request = [[NSFetchRequest alloc]init];
     
     NSEntityDescription*description =
     [NSEntityDescription entityForName:@"Groups"
                 inManagedObjectContext:appDelegate.managedObjectContext];
     
+    
+    NSPredicate* predicate = [NSPredicate predicateWithFormat:@"SELF == %@",[[self.rowsToDisplay objectAtIndex:indexPath.row] itsID]];
+    
+    [request setPredicate:predicate];
     [request setEntity:description];
     
     NSError* requestError = nil;
@@ -128,10 +128,12 @@ AppDelegate* appDelegate;
         NSLog(@"%@", [requestError localizedDescription]);
     };
     
-    Groups* group= [resultArray objectAtIndex:row];
+    NamesViewController* namesVC = [[NamesViewController alloc]init];
+    namesVC.group = [resultArray objectAtIndex:0];
+    [self.navigationController pushViewController:namesVC animated:YES];
     
-    return group;
 }
+
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText{
     

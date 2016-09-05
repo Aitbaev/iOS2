@@ -13,6 +13,8 @@
 #import "Students.h"
 #import "Groups.h"
 
+
+
 @interface AppDelegate ()
 
 @end
@@ -24,7 +26,7 @@
    
         int namesArraySize = sizeof(names)/sizeof(names[0]);
         
-        for (int j = 1; j <= 3; j++) {
+        for (int j = 1; j <= groupsNumber; j++) {
             
             Groups* group = [NSEntityDescription insertNewObjectForEntityForName:@"Groups"
                                                           inManagedObjectContext:self.managedObjectContext];
@@ -38,7 +40,6 @@
             
             
             int numOfStudsInGroup = arc4random_uniform(6)+10;  //в каждой группе по 10-15 человек
-            NSLog(@"%d",numOfStudsInGroup);
             for (int i = 0; i < numOfStudsInGroup; i++) {
                 int temp = arc4random_uniform((int)[validNamesNumbers count]);
                 int nameNumber = [[validNamesNumbers objectAtIndex:temp] intValue];

@@ -55,7 +55,6 @@
     NSEntityDescription*description =
     [NSEntityDescription entityForName:@"Students"
                 inManagedObjectContext:appDelegate.managedObjectContext];
-    NSLog(@"%@", self.group.objectID);
 
     NSPredicate* predicate = [NSPredicate predicateWithFormat:@"SUBQUERY(studentsGroups, $sg, $sg == %@).@count >=%d",self.group.objectID, 1];
     
@@ -111,11 +110,7 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-    StudentViewController* namesVC = [[StudentViewController alloc]init];
-    
-    
     NSFetchRequest* request = [[NSFetchRequest alloc]init];
-    
     NSEntityDescription*description =
     [NSEntityDescription entityForName:@"Students"
                 inManagedObjectContext:appDelegate.managedObjectContext];
@@ -132,8 +127,8 @@
         NSLog(@"%@", [requestError localizedDescription]);
     };
     
+    StudentViewController* namesVC = [[StudentViewController alloc]init];
     namesVC.student = [resultArray objectAtIndex:0];
-    
     [self.navigationController pushViewController:namesVC animated:YES];
    
 }
