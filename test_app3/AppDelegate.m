@@ -143,17 +143,19 @@
     _persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
     NSURL *storeURL = [[self applicationDocumentsDirectory] URLByAppendingPathComponent:@"test_app3.sqlite"];
     NSError *error = nil;
-    NSString *failureReason = @"There was an error creating or loading the application's saved data.";
+    //NSString *failureReason = @"There was an error creating or loading the application's saved data.";
     if (![_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&error]) {
         // Report any error we got.
-        NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+        /*NSMutableDictionary *dict = [NSMutableDictionary dictionary];
         dict[NSLocalizedDescriptionKey] = @"Failed to initialize the application's saved data";
         dict[NSLocalizedFailureReasonErrorKey] = failureReason;
         dict[NSUnderlyingErrorKey] = error;
         error = [NSError errorWithDomain:@"YOUR_ERROR_DOMAIN" code:9999 userInfo:dict];
         
         NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-        abort();
+        abort();*/
+        [[NSFileManager defaultManager]removeItemAtURL:storeURL error:nil];
+        [_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&error];
     }
     return _persistentStoreCoordinator;
 }

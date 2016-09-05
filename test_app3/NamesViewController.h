@@ -13,7 +13,8 @@
 
 @property(weak, nonatomic)UITableView* tableView;
 @property(strong, nonatomic)Groups* group;
-@property(strong, nonatomic)NSMutableArray* studentsArray;
+@property(strong, nonatomic)NSMutableArray* rowsToDisplay;;
 @property(weak, nonatomic)UISearchBar* searchBar;
+
 
 @end

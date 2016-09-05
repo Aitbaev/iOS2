@@ -53,9 +53,28 @@ AppDelegate* appDelegate;
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    self.rowsToDisplay = [[NSMutableArray alloc]init];
     appDelegate = [[UIApplication sharedApplication]delegate];
     
     //self.displayItems = [[NSMutableArray alloc]initWithArray:];
+    
+    NSFetchRequest* request = [[NSFetchRequest alloc]init];
+    
+    NSEntityDescription*description =
+    [NSEntityDescription entityForName:@"Groups"
+                inManagedObjectContext:appDelegate.managedObjectContext];
+    
+    [request setEntity:description];
+    
+    NSError* requestError = nil;
+    NSArray* resultArray = [appDelegate.managedObjectContext executeFetchRequest:request error:&requestError];
+    if (requestError) {
+        NSLog(@"%@", [requestError localizedDescription]);
+    };
+    
+    for(Groups* obj in resultArray){
+        [self.rowsToDisplay addObject:obj.groupsNames];
+    }
 }
 
 - (void)didReceiveMemoryWarning {
@@ -71,14 +90,14 @@ AppDelegate* appDelegate;
 -(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     
     static NSString* identifier = @"Cell";
-    
+    //в случае если число групп задумается увеличить
     UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:identifier];
     
     if(!cell){
         cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
     
-    cell.textLabel.text = [[self getGroupForRow:indexPath.row] groupsNames];
+    cell.textLabel.text = [self.rowsToDisplay objectAtIndex:indexPath.row];
     
     return cell;
 }
@@ -87,6 +106,7 @@ AppDelegate* appDelegate;
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
     NamesViewController* namesVC = [[NamesViewController alloc]init];
+    
     namesVC.group = [self getGroupForRow:indexPath.row];
     
     [self.navigationController pushViewController:namesVC animated:YES];

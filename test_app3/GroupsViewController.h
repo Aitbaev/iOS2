@@ -12,6 +12,7 @@
 @property(weak, nonatomic)UITableView* tableView;
 @property(weak, nonatomic)UISearchBar* searchBar;
 
+@property(strong, nonatomic)NSMutableArray* rowsToDisplay;
 //@property(strong, nonatomic)NSMutableArray* displayItems;
 
 @end
