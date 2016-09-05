@@ -8,10 +8,11 @@
 #import "AppDelegate.h"
 #import "GroupsViewController.h"
 #import "NamesViewController.h"
+#import "StudentViewController.h"
 #import "Groups.h"
 #import "Students.h"
 #import "Names.h"
-#import "RowsClass.h"
+
 
 
 @interface GroupsViewController ()<UITableViewDelegate,UITableViewDataSource, UISearchBarDelegate>
@@ -74,10 +75,7 @@ AppDelegate* appDelegate;
     };
     
     for(Groups* obj in resultArray){
-        RowsClass* rowObj = [[RowsClass alloc]init];
-        rowObj.itsRow = obj.groupsNames;
-        rowObj.itsID = obj.objectID;
-        [self.rowsToDisplay addObject:rowObj];
+        [self.rowsToDisplay addObject:obj];
     }
 }
 
@@ -88,7 +86,7 @@ AppDelegate* appDelegate;
 
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    return groupsNumber;
+    return [self.rowsToDisplay count];
 }
 
 -(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -101,7 +99,10 @@ AppDelegate* appDelegate;
         cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
     
-    cell.textLabel.text = [[self.rowsToDisplay objectAtIndex:indexPath.row] itsRow];
+    if([[self.rowsToDisplay objectAtIndex:indexPath.row] isKindOfClass:[Groups class]])
+        cell.textLabel.text = [[self.rowsToDisplay objectAtIndex:indexPath.row] groupsNames];//itsRow];
+    else
+        cell.textLabel.text = [[self.rowsToDisplay objectAtIndex:indexPath.row] studentsNames];
     
     return cell;
 }
@@ -109,35 +110,94 @@ AppDelegate* appDelegate;
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-    
-    NSFetchRequest* request = [[NSFetchRequest alloc]init];
-    
-    NSEntityDescription*description =
-    [NSEntityDescription entityForName:@"Groups"
-                inManagedObjectContext:appDelegate.managedObjectContext];
-    
-    
-    NSPredicate* predicate = [NSPredicate predicateWithFormat:@"SELF == %@",[[self.rowsToDisplay objectAtIndex:indexPath.row] itsID]];
-    
-    [request setPredicate:predicate];
-    [request setEntity:description];
-    
-    NSError* requestError = nil;
-    NSArray* resultArray = [appDelegate.managedObjectContext executeFetchRequest:request error:&requestError];
-    if (requestError) {
-        NSLog(@"%@", [requestError localizedDescription]);
-    };
-    
-    NamesViewController* namesVC = [[NamesViewController alloc]init];
-    namesVC.group = [resultArray objectAtIndex:0];
-    [self.navigationController pushViewController:namesVC animated:YES];
-    
+    if([[self.rowsToDisplay objectAtIndex:indexPath.row] isKindOfClass:[Groups class]]){
+        NamesViewController* studentsVC = [[NamesViewController alloc]init];
+        
+        studentsVC.group = [self.rowsToDisplay objectAtIndex:indexPath.row];
+        [self.navigationController pushViewController:studentsVC animated:YES];
+    }else{
+        StudentViewController* namesVC = [[StudentViewController alloc]init];
+        namesVC.student = [self.rowsToDisplay objectAtIndex:indexPath.row];
+        [self.navigationController pushViewController:namesVC animated:YES];
+    }
 }
 
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText{
-    
+    if ([searchText length] == 0) {/*
+        [self.rowsToDisplay removeAllObjects];
+        
+        NSFetchRequest* request = [[NSFetchRequest alloc]init];
+        NSEntityDescription*description =
+        [NSEntityDescription entityForName:@"Students"
+                    inManagedObjectContext:appDelegate.managedObjectContext];
+        
+        NSSortDescriptor* namesSortDescriptor = [[NSSortDescriptor alloc]initWithKey:@"studentsNames" ascending:YES];
+        [request setSortDescriptors:@[namesSortDescriptor]];
+
+        [request setEntity:description];
+        
+        NSError* requestError = nil;
+        NSArray* resultArray = [appDelegate.managedObjectContext executeFetchRequest:request error:&requestError];
+        if (requestError) {
+            NSLog(@"%@", [requestError localizedDescription]);
+        };
+        
+        for(Students* obj in resultArray){
+            [self.rowsToDisplay addObject:obj];
+        }
+        */
+        
+        NSFetchRequest* request = [[NSFetchRequest alloc]init];
+        
+        NSEntityDescription*description =
+        [NSEntityDescription entityForName:@"Groups"
+                    inManagedObjectContext:appDelegate.managedObjectContext];
+        
+        [request setEntity:description];
+        
+        NSError* requestError = nil;
+        NSArray* resultArray = [appDelegate.managedObjectContext executeFetchRequest:request error:&requestError];
+        if (requestError) {
+            NSLog(@"%@", [requestError localizedDescription]);
+        };
+        
+        for(Groups* obj in resultArray){
+            [self.rowsToDisplay addObject:obj];
+        }
+
+        
+    }else{
+        [self.rowsToDisplay removeAllObjects];
+        
+        NSFetchRequest* request = [[NSFetchRequest alloc]init];
+        NSEntityDescription*description =
+        [NSEntityDescription entityForName:@"Students"
+                    inManagedObjectContext:appDelegate.managedObjectContext];
+        
+        NSSortDescriptor* namesSortDescriptor = [[NSSortDescriptor alloc]initWithKey:@"studentsNames" ascending:YES];
+        [request setSortDescriptors:@[namesSortDescriptor]];
+        
+        NSPredicate* predicate = [NSPredicate predicateWithFormat:@" studentsNames CONTAINS[c] %@", searchText];
+        [request setPredicate:predicate];
+        
+        
+        [request setEntity:description];
+        
+        NSError* requestError = nil;
+        NSArray* resultArray = [appDelegate.managedObjectContext executeFetchRequest:request error:&requestError];
+        if (requestError) {
+            NSLog(@"%@", [requestError localizedDescription]);
+        };
+        
+        for(Students* obj in resultArray){
+            [self.rowsToDisplay addObject:obj];
+        }
+    }
+    [self.tableView reloadData];
 }
+
+
 
 - (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar{
     [searchBar setShowsCancelButton:YES animated:YES];

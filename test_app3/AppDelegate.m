@@ -46,15 +46,42 @@
                 
                 [validNamesNumbers removeObjectAtIndex:temp];
                 
-                Students* student = [NSEntityDescription insertNewObjectForEntityForName:@"Students"
-                                                                  inManagedObjectContext:self.managedObjectContext];
-                student.studentsNames = names[nameNumber];
                 
-                [group addStudentsInGroupObject:student] ;
+                NSFetchRequest* request = [[NSFetchRequest alloc]init];
+                NSEntityDescription*description =
+                [NSEntityDescription entityForName:@"Students"
+                            inManagedObjectContext:self.managedObjectContext];
+                
+                NSSortDescriptor* namesSortDescriptor = [[NSSortDescriptor alloc]initWithKey:@"studentsNames" ascending:YES];
+                [request setSortDescriptors:@[namesSortDescriptor]];
+                
+                NSPredicate* predicate = [NSPredicate predicateWithFormat:@" studentsNames == %@", names[nameNumber]];
+                [request setPredicate:predicate];
+                
+                
+                [request setEntity:description];
+                
+                NSError* requestError = nil;
+                NSArray* resultArray = [self.managedObjectContext executeFetchRequest:request error:&requestError];
+                if (requestError) {
+                    NSLog(@"%@", [requestError localizedDescription]);
+                };
+                
+                if ([resultArray count] == 0) {
+                    Students* student = [NSEntityDescription insertNewObjectForEntityForName:@"Students"
+                                                                      inManagedObjectContext:self.managedObjectContext];
+                    student.studentsNames = names[nameNumber];
+                    
+                    [group addStudentsInGroupObject:student];
+                    
+                    [self.managedObjectContext save:nil];
+                }else{
+                    [[resultArray objectAtIndex:0] addStudentsGroupsObject:group];
+                }
                 
             }
             
-            [self.managedObjectContext save:nil];
+            
             
             
         }
