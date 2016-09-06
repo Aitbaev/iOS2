@@ -124,9 +124,9 @@ AppDelegate* appDelegate;
 
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText{
-    if ([searchText length] == 0) {/*
+    if ([searchText length] == 0) {
         [self.rowsToDisplay removeAllObjects];
-        
+        /*
         NSFetchRequest* request = [[NSFetchRequest alloc]init];
         NSEntityDescription*description =
         [NSEntityDescription entityForName:@"Students"
@@ -199,14 +199,14 @@ AppDelegate* appDelegate;
 
 
 
-- (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar{
+/*- (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar{
     [searchBar setShowsCancelButton:YES animated:YES];
 }
 
 -(void)searchBarCancelButtonClicked:(UISearchBar *)searchBar{
     [searchBar resignFirstResponder];
     [searchBar setShowsCancelButton:NO animated:YES];
-}
+}*/
 
 
 @end
