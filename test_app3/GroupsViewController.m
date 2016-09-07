@@ -31,7 +31,6 @@ AppDelegate* appDelegate;
     [super loadView];
     
     CGRect frame = self.view.bounds;
-    frame.origin = CGPointZero;
     
     UITableView* tableView = [[UITableView alloc]initWithFrame:frame style:UITableViewStyleGrouped];
     tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
@@ -42,7 +41,7 @@ AppDelegate* appDelegate;
     [self.view addSubview:tableView];
     self.tableView = tableView;
     
-    UISearchBar* searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 60, 420, 40)];
+    UISearchBar* searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 65, 415, 40)];
     searchBar.autoresizingMask =  UIViewAutoresizingFlexibleWidth;
     
     searchBar.delegate = self;
