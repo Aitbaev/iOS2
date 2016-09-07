@@ -41,8 +41,7 @@ AppDelegate* appDelegate;
     [self.view addSubview:tableView];
     self.tableView = tableView;
     
-    UISearchBar* searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 65, 415, 40)];
-    searchBar.autoresizingMask =  UIViewAutoresizingFlexibleWidth;
+    UISearchBar* searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 65, frame.size.width, 40)];
     
     searchBar.delegate = self;
     self.searchBar = searchBar;

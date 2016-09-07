@@ -28,14 +28,14 @@
     UITableView* tableView = [[UITableView alloc]initWithFrame:frame style:UITableViewStyleGrouped];
     tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
     
+    
     tableView.delegate = self;
     tableView.dataSource = self;
     
     [self.view addSubview:tableView];
     self.tableView = tableView;
     
-    UISearchBar* searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 65, 415, 40)];
-    searchBar.autoresizingMask =  UIViewAutoresizingFlexibleWidth;
+    UISearchBar* searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 65, frame.size.width, 40)];
     
     searchBar.delegate = self;
     self.searchBar = searchBar;
