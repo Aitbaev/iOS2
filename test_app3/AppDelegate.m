@@ -9,7 +9,6 @@
 #import "AppDelegate.h"
 #import "GroupsViewController.h"
 #import "Names.h"
-
 #import "Students.h"
 #import "Groups.h"
 
@@ -23,30 +22,31 @@
 
 //Заполнение базы данных
 -(void)fillingCoreData{
-   
-        int namesArraySize = sizeof(names)/sizeof(names[0]);
-        
+    int namesArraySize = sizeof(names)/sizeof(names[0]);
+        //внешний цикл - заполняет сущность "Groups"
         for (int j = 1; j <= groupsNumber; j++) {
             
             Groups* group = [NSEntityDescription insertNewObjectForEntityForName:@"Groups"
                                                           inManagedObjectContext:self.managedObjectContext];
             group.groupsNames = [[NSString stringWithFormat:@"%d",j] stringByAppendingString:@"-й курс"];
-            
+            //массив индексов доступных имен для каждой группы
             NSMutableArray* validNamesNumbers = [[NSMutableArray alloc]init];
-            
+            //в следующем цикле заполнияем этот массив числами, соответствующими индексам массива имен из файла Names.h (Казалось бы зачем заполнять массив элементами которые так же являются индексами этого массива. Это сделанно для того, чтоб можно было выбрать случайный элемент из этого массива в цикле заполнения групп студентами (этот цикл идет после нижестоящего) затем из статического массива имен, который находится в файле Names.h, взять в нем элемент под индексом соответствующим элементу выбранному из массива validNamesNumbers, затем удалить его (выбранный случайный элемент из массива validNamesNumbers), такми образом значение в элементе массива validNamesNumbers - служит нам номером для номером имени, которое мы достаем из статического массива в файле Names.h, а индекс - по нему мы делаем слчайный выбор элемента, тот факт что после выбора элемента мы удаляем его  - не дает возможности повторяться именам в группе)
             for (int i = 0; i < namesArraySize; i++) {
                 [validNamesNumbers addObject:[NSNumber numberWithInt:i]];
             }
             
-            
-            int numOfStudsInGroup = arc4random_uniform(6)+10;  //в каждой группе по 10-15 человек
+            int numOfStudsInGroup = arc4random_uniform(6)+10;  //число студентов в каждой группе (по 10-15 человек)
+            //внутренний цикл - заполнения групп студентами
             for (int i = 0; i < numOfStudsInGroup; i++) {
+                //выбираем случайный элемент из массива индексов доступных имен для каждой группы(индексы доступных имен - есть элементы этого массива)
                 int temp = arc4random_uniform((int)[validNamesNumbers count]);
+                //далее сохраняем этот номер в переменную
                 int nameNumber = [[validNamesNumbers objectAtIndex:temp] intValue];
-                
+                //удаляем элемент с выбранным номером из массива индексов доступных имен для каждой группы, чтобы имена в группе не повтарялись
                 [validNamesNumbers removeObjectAtIndex:temp];
                 
-                
+                //достаем всех студентов добавленных в базу данных, у которых имя такое же какое мы выбрали (переменная nameNumbers - индекс доступного имени из массива имен)
                 NSFetchRequest* request = [[NSFetchRequest alloc]init];
                 NSEntityDescription*description =
                 [NSEntityDescription entityForName:@"Students"
@@ -66,7 +66,7 @@
                 if (requestError) {
                     NSLog(@"%@", [requestError localizedDescription]);
                 };
-                
+                //если студента с таким именем еще нет в базе данных - мы его добавляем в в базу данных к данной группе
                 if ([resultArray count] == 0) {
                     Students* student = [NSEntityDescription insertNewObjectForEntityForName:@"Students"
                                                                       inManagedObjectContext:self.managedObjectContext];
@@ -75,21 +75,14 @@
                     [group addStudentsInGroupObject:student];
                     
                     [self.managedObjectContext save:nil];
-                }else{
+                }else{//если студент с таким именем уже есть под другой группой, то просто добавляем к имеющемуся студенту еще одну группу
                     [[resultArray objectAtIndex:0] addStudentsGroupsObject:group];
                 }
-                
             }
-            
-            
-            
-            
         }
         NSError* error = nil;
-        if(![self.managedObjectContext save:&error]){
+        if(![self.managedObjectContext save:&error]){//производим сохранение
             NSLog(@"%@",[error localizedDescription]);
-            
-            
         }
 }
 
@@ -109,8 +102,9 @@
     [self.window makeKeyAndVisible];
     
     GroupsViewController* controller = [[GroupsViewController alloc]init];
-    UINavigationController* navController = [[UINavigationController alloc] initWithRootViewController:controller];
-    self.window.rootViewController = navController;    
+    self.navigationController = [[UINavigationController alloc] initWithRootViewController:controller];
+    self.navigationController.navigationBar.backgroundColor = [UIColor yellowColor];
+    self.window.rootViewController = self.navigationController;
     
     return YES;
 }

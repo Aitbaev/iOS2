@@ -56,8 +56,6 @@ AppDelegate* appDelegate;
     self.rowsToDisplay = [[NSMutableArray alloc]init];
     appDelegate = [[UIApplication sharedApplication]delegate];
     
-    //self.displayItems = [[NSMutableArray alloc]initWithArray:];
-    
     NSFetchRequest* request = [[NSFetchRequest alloc]init];
     
     NSEntityDescription*description =
