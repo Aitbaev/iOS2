@@ -15,7 +15,7 @@
 
 
 
-@interface GroupsViewController ()<UITableViewDelegate,UITableViewDataSource, UISearchBarDelegate>
+@interface GroupsViewController ()<UITableViewDelegate,UITableViewDataSource, UISearchBarDelegate, UIBarPositioningDelegate>
 
 {
 
@@ -33,7 +33,6 @@ AppDelegate* appDelegate;
     CGRect frame = self.view.bounds;
     
     UITableView* tableView = [[UITableView alloc]initWithFrame:frame style:UITableViewStyleGrouped];
-    tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
     
     tableView.delegate = self;
     tableView.dataSource = self;
@@ -73,6 +72,21 @@ AppDelegate* appDelegate;
     for(Groups* obj in resultArray){
         [self.rowsToDisplay addObject:obj];
     }
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardShown:) name:UIKeyboardDidShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardHidden:) name:UIKeyboardWillHideNotification object:nil];
+}
+
+-(void)keyboardShown:(NSNotification*)note{
+    CGRect keyboardFrame;
+    [[[note userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] getValue:&keyboardFrame];
+    CGRect tableViewFrame = self.tableView.frame;
+    tableViewFrame.size.height -= keyboardFrame.size.height;
+    [self.tableView setFrame:tableViewFrame];
+}
+
+-(void)keyboardHidden:(NSNotification*)note{
+    [self.tableView setFrame:self.view.bounds];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -122,27 +136,6 @@ AppDelegate* appDelegate;
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText{
     if ([searchText length] == 0) {
         [self.rowsToDisplay removeAllObjects];
-        /*
-        NSFetchRequest* request = [[NSFetchRequest alloc]init];
-        NSEntityDescription*description =
-        [NSEntityDescription entityForName:@"Students"
-                    inManagedObjectContext:appDelegate.managedObjectContext];
-        
-        NSSortDescriptor* namesSortDescriptor = [[NSSortDescriptor alloc]initWithKey:@"studentsNames" ascending:YES];
-        [request setSortDescriptors:@[namesSortDescriptor]];
-
-        [request setEntity:description];
-        
-        NSError* requestError = nil;
-        NSArray* resultArray = [appDelegate.managedObjectContext executeFetchRequest:request error:&requestError];
-        if (requestError) {
-            NSLog(@"%@", [requestError localizedDescription]);
-        };
-        
-        for(Students* obj in resultArray){
-            [self.rowsToDisplay addObject:obj];
-        }
-        */
         
         NSFetchRequest* request = [[NSFetchRequest alloc]init];
         
@@ -203,6 +196,8 @@ AppDelegate* appDelegate;
     [searchBar resignFirstResponder];
     [searchBar setShowsCancelButton:NO animated:YES];
 }
+
+
 
 
 @end

@@ -18,17 +18,20 @@
 -(void)loadView{
     
     self.view = [[UIView alloc]initWithFrame:[[UIScreen mainScreen]bounds]];
-    self.view.backgroundColor = [UIColor whiteColor];
+   
     
-    UIImageView* photo = [[UIImageView alloc] initWithFrame:CGRectMake(10, 75, 300, 300)];
+    float quarter = (self.view.bounds.size.width > self.view.bounds.size.height) ? self.view.bounds.size.height/2 : self.view.bounds.size.width/2;
     
-    NSURL *url = [NSURL URLWithString:@"http://dializa.md/wp-content/uploads/2015/06/no-avatar-ff.png"];
+    UIImageView* photo = [[UIImageView alloc] initWithFrame:CGRectMake(10, 74, quarter-15, quarter-15)];//сторона фотографии - четверть меньшей части
+    
+    NSURL *url = [NSURL URLWithString:@"http://dializa.md/wp-content/uploads/2015/06/no-avatar-ff.png"];//url пришлось использовать потому, что на git не закидывался png файл
     NSData *data = [NSData dataWithContentsOfURL:url];
     photo.image = [UIImage  imageWithData:data];
     
     [self.view addSubview:photo];
     
-    UILabel* name = [[UILabel alloc] initWithFrame:CGRectMake(10, 385, 380, 70)];
+    UILabel* name = [[UILabel alloc] initWithFrame:CGRectMake(10, quarter+5+74, quarter*2-20, 35)];
+    
     name.text = [self.student studentsNames];
     [self.view addSubview:name];
 }

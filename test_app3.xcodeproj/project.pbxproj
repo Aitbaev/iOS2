@@ -34,6 +34,7 @@
 		846D9C7A1D77AE4100477CC2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		846D9CAE1D787BB600477CC2 /* NamesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NamesViewController.h; sourceTree = "<group>"; };
 		846D9CAF1D787BB600477CC2 /* NamesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NamesViewController.m; sourceTree = "<group>"; };
+		847BC2671D804C9600A99EC1 /* StudentViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StudentViewController.h; sourceTree = "<group>"; };
 		84D50A7D1D79BDFB008066FF /* GroupsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GroupsViewController.h; sourceTree = "<group>"; };
 		84D50A7E1D79BDFB008066FF /* GroupsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GroupsViewController.m; sourceTree = "<group>"; };
 		84D50A811D79C480008066FF /* StudentViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StudentViewController.m; sourceTree = "<group>"; };
@@ -85,6 +86,7 @@
 				84D50A7E1D79BDFB008066FF /* GroupsViewController.m */,
 				846D9CAE1D787BB600477CC2 /* NamesViewController.h */,
 				846D9CAF1D787BB600477CC2 /* NamesViewController.m */,
+				847BC2671D804C9600A99EC1 /* StudentViewController.h */,
 				84D50A811D79C480008066FF /* StudentViewController.m */,
 				846D9C701D77AE4100477CC2 /* test_app3-Prefix.pch */,
 				846D9C751D77AE4100477CC2 /* Assets.xcassets */,

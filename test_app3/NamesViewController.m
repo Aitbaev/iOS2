@@ -25,9 +25,7 @@
     [super loadView];
     CGRect frame = self.view.bounds;
     
-    UITableView* tableView = [[UITableView alloc]initWithFrame:frame style:UITableViewStyleGrouped];
-    tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
-    
+    UITableView* tableView = [[UITableView alloc]initWithFrame:frame style:UITableViewStyleGrouped];  
     
     tableView.delegate = self;
     tableView.dataSource = self;
@@ -72,6 +70,21 @@
     for (Students* obj in resultArray) {
         [self.rowsToDisplay addObject:obj];
     }
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardShown:) name:UIKeyboardDidShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardHidden:) name:UIKeyboardWillHideNotification object:nil];
+}
+
+-(void)keyboardShown:(NSNotification*)note{
+    CGRect keyboardFrame;
+    [[[note userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] getValue:&keyboardFrame];
+    CGRect tableViewFrame = self.tableView.frame;
+    tableViewFrame.size.height -= keyboardFrame.size.height;
+    [self.tableView setFrame:tableViewFrame];
+}
+
+-(void)keyboardHidden:(NSNotification*)note{
+    [self.tableView setFrame:self.view.bounds];
 }
 
 - (void)didReceiveMemoryWarning {
